@@ -3,6 +3,7 @@ package com.system.managesystem.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.system.managesystem.common.QueryPageParam;
 import com.system.managesystem.common.Result;
@@ -59,7 +60,9 @@ public class UserController {
     @PostMapping ("/search")
     public List<User> search(@RequestBody User user){
         LambdaQueryWrapper<User> lambdaQueryWrapper=new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.like(User::getName,user.getName());
+        if(StringUtils.isNotBlank(user.getName())){
+            lambdaQueryWrapper.like(User::getName,user.getName());
+        }
         return userService.list(lambdaQueryWrapper);
     }
 
