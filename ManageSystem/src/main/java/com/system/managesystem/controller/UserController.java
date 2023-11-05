@@ -93,6 +93,7 @@ public class UserController {
 
         HashMap param=queryPageParam.getParam();
         String name=(String)param.get("name");
+        String sex=(String)param.get("sex");
         System.out.println("name==="+name);
 //        System.out.println("no==="+(String)param.get("no"));
         Page<User> page=new Page<>();
@@ -102,6 +103,9 @@ public class UserController {
         LambdaQueryWrapper<User> lambdaQueryWrapper=new LambdaQueryWrapper<>();
         if(ObjectUtils.isNotNull(name)&&StringUtils.isNotBlank(name)&&!"null".equals(name)){
             lambdaQueryWrapper.like(User::getName,name);
+        }
+        if(ObjectUtils.isNotNull(sex)&&StringUtils.isNotBlank(sex)&&!"null".equals(sex)){
+            lambdaQueryWrapper.eq(User::getSex,sex);
         }
 //        IPage result= userService.pageC(page);
         IPage result= userService.pageCC(page,lambdaQueryWrapper);
