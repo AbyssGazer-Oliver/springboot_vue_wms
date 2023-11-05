@@ -1,4 +1,5 @@
 <template>
+  <div>
   <el-table :data="tableData"
             :header-cell-style="{backgroundColor:'#f2f5fc',color:'#555'}"
             border
@@ -28,11 +29,23 @@
         </el-tag>
       </template>
     </el-table-column>
-    <el-table-column prop="phone" label="电话" width="180">
+    <el-table-column prop="phone" label="电话" width="280">
     </el-table-column>
     <el-table-column prop="operate" label="操作">
+      <el-button type="success">编辑</el-button>
+      <el-button type="danger">删除</el-button>
     </el-table-column>
   </el-table>
+    <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="pageNum"
+        :page-sizes="[5, 10, 20, 30]"
+        :page-size="pageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="totalNum">
+    </el-pagination>
+  </div>
 </template>
 
 <style scoped>
@@ -44,7 +57,10 @@ export default {
   name: "AppMain",
   data() {
     return {
-      tableData:[]
+      tableData:[],
+      pageNum:1,
+      pageSize:10,
+      totalNum:0
     }
   },
   methods:{
@@ -54,10 +70,30 @@ export default {
       });
     },
     loadPost(){
-      this.$axios.post(this.$httpUrl+'/user/search',{}).then(res=>res.data).then(res=>{
+      // 设置分页查询
+      this.$axios.post(this.$httpUrl+'/user/listPageC',{
+        pageSize:this.pageSize,
+        pageNum:this.pageNum
+      }).then(res=>res.data).then(res=>{
         console.log(res);
-        this.tableData=res;
+        if(res.code==200){
+          this.tableData=res.data;
+          this.totalNum=res.total;
+        }else{
+          alert("获取用户信息失败！");
+        }
       });
+    },
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+      this.pageNum=1;
+      this.pageSize=val;
+      this.loadPost();
+    },
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`);
+      this.pageNum=val;
+      this.loadPost();
     }
   },
   beforeMount() {

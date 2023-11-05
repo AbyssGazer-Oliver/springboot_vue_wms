@@ -3,6 +3,7 @@ package com.system.managesystem.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.system.managesystem.common.QueryPageParam;
@@ -58,12 +59,12 @@ public class UserController {
     }
     // fuzzy search
     @PostMapping ("/search")
-    public List<User> search(@RequestBody User user){
+    public Result search(@RequestBody User user){
         LambdaQueryWrapper<User> lambdaQueryWrapper=new LambdaQueryWrapper<>();
         if(StringUtils.isNotBlank(user.getName())){
             lambdaQueryWrapper.like(User::getName,user.getName());
         }
-        return userService.list(lambdaQueryWrapper);
+        return Result.succeed(userService.list(lambdaQueryWrapper));
     }
 
     @PostMapping ("/listPage")
@@ -88,7 +89,7 @@ public class UserController {
         return result.getRecords();
     }
     @PostMapping ("/listPageC")
-    public List<User> listPageC(@RequestBody QueryPageParam queryPageParam){
+    public Result listPageC(@RequestBody QueryPageParam queryPageParam){
 
         HashMap param=queryPageParam.getParam();
         String name=(String)param.get("name");
@@ -99,12 +100,13 @@ public class UserController {
         page.setSize(queryPageParam.getPageSize());
 
         LambdaQueryWrapper<User> lambdaQueryWrapper=new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.like(User::getName,name);
-
+        if(ObjectUtils.isNotNull(name)&&StringUtils.isNotBlank(name)&&!"null".equals(name)){
+            lambdaQueryWrapper.like(User::getName,name);
+        }
 //        IPage result= userService.pageC(page);
         IPage result= userService.pageCC(page,lambdaQueryWrapper);
         System.out.println("total=="+result.getTotal());
-        return result.getRecords();
+        return Result.succeed(result.getRecords(),result.getTotal());
     }
 
     @PostMapping ("/result")
@@ -119,7 +121,9 @@ public class UserController {
         page.setSize(queryPageParam.getPageSize());
 
         LambdaQueryWrapper<User> lambdaQueryWrapper=new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.like(User::getName,name);
+        if(ObjectUtils.isNotNull(name)&&StringUtils.isNotBlank(name)&&!"null".equals(name)){
+            lambdaQueryWrapper.like(User::getName,name);
+        }
 
 //        IPage result= userService.pageC(page);
         IPage result= userService.pageCC(page,lambdaQueryWrapper);
