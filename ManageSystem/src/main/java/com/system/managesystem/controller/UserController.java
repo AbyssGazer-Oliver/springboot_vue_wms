@@ -36,8 +36,14 @@ public class UserController {
 
     // add User
     @PostMapping("/add")
-    public boolean save(@RequestBody User user){
-        return userService.save(user);
+    public Result save(@RequestBody User user){
+        return userService.save(user)?Result.succeed():Result.fail();
+    }
+
+    @GetMapping("/findByNo")
+    public Result findByNo(@RequestParam String no){
+        List<User> list=userService.lambdaQuery().eq(User::getNo,no).list();
+        return list.size()>0?Result.succeed(list):Result.fail();
     }
 
     // update User
