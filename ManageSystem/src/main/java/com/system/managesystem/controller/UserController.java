@@ -48,20 +48,20 @@ public class UserController {
 
     // update User
     @PostMapping("/update")
-    public boolean update(@RequestBody User user){
-        return userService.updateById(user);
+    public Result update(@RequestBody User user){
+        return userService.updateById(user)?Result.succeed():Result.fail();
     }
 
     // add or update User
     @PostMapping("/addOrUpdate")
-    public boolean addOrUpdate(@RequestBody User user){
-        return userService.saveOrUpdate(user);
+    public Result addOrUpdate(@RequestBody User user){
+        return userService.saveOrUpdate(user)?Result.succeed():Result.fail();
     }
 
     // delete
     @GetMapping("/delete")
-    public boolean delete(Integer id){
-        return userService.removeById(id);
+    public Result delete(@RequestParam String id){
+        return userService.removeById(id)?Result.succeed():Result.fail();
     }
     // fuzzy search
     @PostMapping ("/search")

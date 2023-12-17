@@ -20,8 +20,6 @@
               :header-cell-style="{backgroundColor:'#f2f5fc',color:'#555'}"
               border
     >
-      <el-table-column prop="id" label="ID" width="60">
-      </el-table-column>
       <el-table-column prop="no" label="账号" width="180">
       </el-table-column>
       <el-table-column prop="name" label="姓名" width="180">
@@ -48,8 +46,20 @@
       <el-table-column prop="phone" label="电话" width="280">
       </el-table-column>
       <el-table-column prop="operate" label="操作">
-        <el-button type="success">编辑</el-button>
-        <el-button type="danger">删除</el-button>
+        <template slot-scope="scope">
+          <el-button type="success" @click.native="edit(scope.row)">编辑</el-button>
+          <el-popconfirm
+              confirm-button-text='好的'
+              cancel-button-text='不用了'
+              icon="el-icon-info"
+              icon-color="red"
+              title="确定删除吗？"
+              @confirm="deleteOp(scope.row.id)"
+              style="margin-left: 5px"
+          >
+            <el-button slot="reference" type="danger">删除</el-button>
+          </el-popconfirm>
+        </template>
       </el-table-column>
     </el-table>
       <el-pagination
@@ -153,6 +163,7 @@ export default {
       ],
       centerDialogVisible:false,
       form:{
+        id:'',
         no:'',
         password:'',
         name:'',
@@ -203,10 +214,44 @@ export default {
         this.resetForm();
       })
     },
+    edit(row){
+      // console.log(row);
+      this.centerDialogVisible=true;
+      this.$nextTick(()=>{
+        // 赋值到表单
+        this.form.id=row.id;
+        this.form.no=row.no;
+        this.form.name=row.name;
+        this.form.password='';
+        this.form.age=row.age+'';
+        this.form.sex=row.sex+'';
+        this.form.phone=row.phone;
+        this.form.roleId=row.roleId;
+      })
+
+    },
+    deleteOp(id){
+      console.log(id);
+      this.$axios.get(this.$httpUrl+'/user/delete?id='+id).then(res=>res.data).then(async res => {
+        await console.log(res);
+        if (res.code == 200) {
+          this.$message({
+            message: "操作成功!",
+            type: "success"
+          });
+          this.loadPost();
+        } else {
+          this.$message({
+            message: "操作失败!",
+            type: "error"
+          });
+        }
+      });
+    },
     save(){
       this.$refs.form.validate((valid) => {
           if (valid) {
-            this.$axios.post(this.$httpUrl+'/user/add',this.form).then(res=>res.data).then(res=>{
+            this.$axios.post(this.$httpUrl+'/user/addOrUpdate',this.form).then(res=>res.data).then(res=>{
               console.log(res);
               if(res.code==200){
                 this.$message({

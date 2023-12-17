@@ -2,7 +2,7 @@
   <el-menu background-color="#545c64"
            text-color="#fff"
            active-text-color="#ffd04b"
-           style="height: 100vh;"
+           style="height: 100%;"
            :collapse="isCollapse"
            :collapse-transition="false"
            default-active="/Home">
