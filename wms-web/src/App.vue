@@ -1,18 +1,16 @@
 <template>
   <div id="app">
-    <AppIndex></AppIndex>
+    <router-view/>
   </div>
 </template>
 
 <script>
 
-import AppIndex from "@/components/AppIndex.vue";
 import './assets/global.css';
 
 export default {
   name: 'App',
   components: {
-    AppIndex
   }
 }
 </script>

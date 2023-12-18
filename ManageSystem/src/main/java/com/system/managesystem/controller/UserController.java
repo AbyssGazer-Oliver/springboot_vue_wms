@@ -73,6 +73,15 @@ public class UserController {
         return Result.succeed(userService.list(lambdaQueryWrapper));
     }
 
+    //login
+    @PostMapping ("/login")
+    public Result login(@RequestBody User user){
+        List list=userService.lambdaQuery()
+                .eq(User::getNo,user.getNo())
+                .eq(User::getPassword,user.getPassword()).list();
+        return !list.isEmpty()?Result.succeed(list.get(0)):Result.fail();
+    }
+
     @PostMapping ("/listPage")
     public List<User> listPage(@RequestBody QueryPageParam queryPageParam){
 //        System.out.println(queryPageParam);
